@@ -1,6 +1,7 @@
 import { logger } from "@coder/logger"
 import * as express from "express"
 import * as http from "http"
+import * as https from "https"
 import nodeFetch, { RequestInit, Response } from "node-fetch"
 import Websocket from "ws"
 import { Disposable } from "../../src/common/emitter"
@@ -10,9 +11,11 @@ import { disposer } from "../../src/node/http"
 
 import { handleUpgrade } from "../../src/node/wsRouter"
 
+export type HttpOrHttpsServer = http.Server | https.Server
+
 // Perhaps an abstraction similar to this should be used in app.ts as well.
 export class HttpServer {
-  private hs: http.Server
+  protected hs: HttpOrHttpsServer
   public dispose: Disposable["dispose"]
 
   /**
@@ -21,7 +24,7 @@ export class HttpServer {
    *
    * Otherwise a new server is created.
    */
-  public constructor(server?: { server: http.Server; dispose: Disposable["dispose"] }) {
+  public constructor(server?: { server: HttpOrHttpsServer; dispose: Disposable["dispose"] }) {
     this.hs = server?.server || http.createServer()
     this.dispose = server?.dispose || disposer(this.hs)
   }
@@ -92,5 +95,15 @@ export class HttpServer {
       return addr.port
     }
     throw new Error("server not listening or listening on unix socket")
+  }
+}
+
+export class HttpsServer extends HttpServer {
+  protected hs: HttpOrHttpsServer
+
+  public constructor(server?: { server: HttpOrHttpsServer; dispose: Disposable["dispose"] }) {
+    super()
+    this.hs = server?.server || https.createServer()
+    this.dispose = server?.dispose || disposer(this.hs)
   }
 }

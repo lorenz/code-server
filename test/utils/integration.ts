@@ -6,7 +6,10 @@ import { workspaceDir } from "./constants"
 import { tmpdir } from "./helpers"
 import * as httpserver from "./httpserver"
 
-export async function setup(argv: string[], configFile?: string): Promise<httpserver.HttpServer> {
+export async function setup(
+  argv: string[],
+  configFile?: string,
+): Promise<httpserver.HttpServer | httpserver.HttpsServer> {
   // This will be used as the data directory to ensure instances do not bleed
   // into each other.
   const dir = await tmpdir(workspaceDir)
@@ -27,5 +30,5 @@ export async function setup(argv: string[], configFile?: string): Promise<httpse
 
   const server = await runCodeServer(args)
 
-  return new httpserver.HttpServer(server)
+  return args.cert ? new httpserver.HttpsServer(server) : new httpserver.HttpServer(server)
 }

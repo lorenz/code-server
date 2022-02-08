@@ -1,5 +1,6 @@
 import { field, logger } from "@coder/logger"
 import http from "http"
+import https from "https"
 import * as os from "os"
 import path from "path"
 import { Disposable } from "../common/emitter"
@@ -89,7 +90,7 @@ export const openInExistingInstance = async (args: DefaultedArgs, socketPath: st
 
 export const runCodeServer = async (
   args: DefaultedArgs,
-): Promise<{ dispose: Disposable["dispose"]; server: http.Server }> => {
+): Promise<{ dispose: Disposable["dispose"]; server: http.Server | https.Server }> => {
   logger.info(`code-server ${version} ${commit}`)
 
   logger.info(`Using user-data-dir ${humanPath(os.homedir(), args["user-data-dir"])}`)
