@@ -49,25 +49,22 @@ describe("health (https)", () => {
     }
   })
 
-  it("/healthz (websocket) with --cert", async () => {
+  it("/ (websocket) with --cert", async () => {
     // NOTES@jsjoeio
     // We connect to /healthz via a websocket
     // and send a message and then we expect it to work
     // with our HTTPS server
     // and the cert arg passed in as well.
-    // Notes from Slack
-    // Ahser said "we could connect it to /vscode
-    // Add the appropriate query variables (it expects connectionType and some other things, probably easiest to look at the browser and see)
-    // Then it might be enough to just see if that connection errors or not
-    // If it does not error then you probably have to try actually sending some data on it"
-    // Not sure what do do there. Guess I need to spin up code-server
-    // and look at the network tab.
-    // Also confused on the /healthz vs /vscode part
-    // The websocket runs on /healthz. Is that it?
     codeServer = await integration.setup(["--auth=none", "--cert"], "")
-    const ws = codeServer.ws("/healthz")
+    // NOTE@jsjoeio - do we need to use a dynamic reconnection token that we get from somewhere?
+    const ws = codeServer.ws(
+      "/?type=ExtensionHost&reconnectionToken=dc170cd8-e33c-4519-a6a3-5ef050c27e59&reconnection=false&skipWebSocketFrames=false",
+    )
+    const errorMessages = []
     const message = await new Promise((resolve, reject) => {
-      ws.on("error", console.error)
+      ws.on("error", (err) => {
+        errorMessages.push(err)
+      })
       ws.on("message", (message) => {
         try {
           const j = JSON.parse(message.toString())
@@ -79,6 +76,7 @@ describe("health (https)", () => {
       ws.on("open", () => ws.send(JSON.stringify({ event: "health" })))
     })
     ws.terminate()
+    expect(errorMessages.length).toBe(0)
     expect(message).toStrictEqual({ event: "health", status: "expired", lastHeartbeat: 0 })
   })
 })
