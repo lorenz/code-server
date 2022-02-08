@@ -39,7 +39,7 @@ describe("health (http)", () => {
   })
 })
 
-describe("health (https)", () => {
+describe.only("/ with https server", () => {
   let codeServer: httpserver.HttpServer | httpserver.HttpsServer | undefined
 
   afterEach(async () => {
@@ -49,7 +49,7 @@ describe("health (https)", () => {
     }
   })
 
-  it("/ (websocket) with --cert", async () => {
+  it("should generate cert and connect to websocket without errors", async () => {
     // NOTES@jsjoeio
     // We connect to /healthz via a websocket
     // and send a message and then we expect it to work
@@ -73,10 +73,10 @@ describe("health (https)", () => {
           reject(error)
         }
       })
-      ws.on("open", () => ws.send(JSON.stringify({ event: "health" })))
+      ws.on("open", () => ws.send(JSON.stringify({ event: "test" })))
     })
     ws.terminate()
     expect(errorMessages.length).toBe(0)
-    expect(message).toStrictEqual({ event: "health", status: "expired", lastHeartbeat: 0 })
+    expect(message).toStrictEqual({ event: "test" })
   })
 })
