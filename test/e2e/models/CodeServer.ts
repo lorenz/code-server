@@ -77,8 +77,8 @@ export class CodeServer {
       const proc = cp.spawn(
         "node",
         [
-          ...this.codeServerArgs,
           process.env.CODE_SERVER_TEST_ENTRY || ".",
+          ...this.codeServerArgs,
           // Using port zero will spawn on a random port.
           "--bind-addr",
           "127.0.0.1:0",
@@ -113,6 +113,7 @@ export class CodeServer {
 
       proc.on("close", (code) => {
         const error = new Error("closed unexpectedly")
+        console.log(code, "there is a code")
         if (!this.closed) {
           this.logger.error(error.message, field("code", code))
         }
