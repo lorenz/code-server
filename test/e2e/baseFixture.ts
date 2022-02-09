@@ -9,7 +9,7 @@ import { CodeServer, CodeServerPage } from "./models/CodeServer"
  *
  * If `includeCredentials` is `true` page requests will be authenticated.
  */
-export const describe = (name: string, includeCredentials: boolean, fn: (codeServer: CodeServer) => void) => {
+export const describe = (name: string, includeCredentials: boolean, codeServerArgs: string[], fn: (codeServer: CodeServer) => void) => {
   test.describe(name, () => {
     // This will spawn on demand so nothing is necessary on before.
     const codeServer = new CodeServer(name)
