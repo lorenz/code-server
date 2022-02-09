@@ -12,7 +12,7 @@ import { CodeServer, CodeServerPage } from "./models/CodeServer"
 export const describe = (name: string, includeCredentials: boolean, codeServerArgs: string[], fn: (codeServer: CodeServer) => void) => {
   test.describe(name, () => {
     // This will spawn on demand so nothing is necessary on before.
-    const codeServer = new CodeServer(name)
+    const codeServer = new CodeServer(name, codeServerArgs)
 
     // Kill code-server after the suite has ended. This may happen even without
     // doing it explicitly but it seems prudent to be sure.
