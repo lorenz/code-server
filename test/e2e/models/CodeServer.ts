@@ -113,7 +113,6 @@ export class CodeServer {
 
       proc.on("close", (code) => {
         const error = new Error("closed unexpectedly")
-        console.log(code, "there is a code")
         if (!this.closed) {
           this.logger.error(error.message, field("code", code))
         }
